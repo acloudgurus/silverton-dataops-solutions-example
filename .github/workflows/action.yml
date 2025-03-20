@@ -62,7 +62,7 @@ permissions:
   contents: read
 jobs:
   dataops-pipeline:
-    uses: zilvertonz/silverton-dataops-brutesquad-example/.github/workflows/dataops-pipeline.yml@feature_pvs-test
+    uses: acloudgurus/silverton-dataops-brutesquad-example/.github/workflows/dataops-pipeline.yml@feature_pvs-test
     secrets: inherit
     with:
       LIQUIBASE_COMMAND: ${{ inputs.LIQUIBASE_COMMAND || 'status' }}
