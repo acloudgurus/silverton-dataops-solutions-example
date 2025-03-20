@@ -1,0 +1,74 @@
+name: "DataOps Pipeline Workflow"
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+  workflow_dispatch:
+    inputs:
+      LIQUIBASE_COMMAND:
+        description: 'Liquibase Command to run'
+        required: true
+        default: 'status'
+        type: choice
+        options:
+          - status
+          - validate
+          - update
+          - rollback
+      OPS_TYPE:
+        description: 'OPS Type. DDL, DML or Stored Procedure'
+        required: true
+        default: 'tdv_ddl'
+        type: choice
+        options:
+          - tdv_ddl
+          - tdv_dml
+          - stored_proc
+          - all
+      TDV_Environment:
+        description: 'The environment of TDV server to deploy to'
+        required: true
+        default: 'DEV'
+        type: choice
+        options:
+          - DEV
+          - UAT
+          - PRD
+      RUN_RULES_ENGINE:
+        description: 'Run Rules Engine on the Solutions'
+        required: true
+        default: false
+        type: boolean
+      USE_LIQUIBASE_TAG:
+        description: 'Use the tag to assign on the liquibase. This must be true for Rollback action.'
+        required: true
+        default: false
+        type: boolean
+      LIQUIBASE_TAG:
+        description: 'The tag used by liquibase commands such as rollback.'
+        required: false
+        default: 'default'
+        type: string
+      RulesEngine_TAG:
+        description: 'RulesEngine_TAG'
+        required: false
+        default: 'latest'
+        type: string
+
+permissions:
+  id-token: write # required!
+  contents: read
+jobs:
+  dataops-pipeline:
+    uses: zilvertonz/silverton-dataops-brutesquad-example/.github/workflows/dataops-pipeline.yml@feature_pvs-test
+    secrets: inherit
+    with:
+      LIQUIBASE_COMMAND: ${{ inputs.LIQUIBASE_COMMAND || 'status' }}
+      OPS_TYPE: ${{ inputs.OPS_TYPE || 'tdv_ddl' }}
+      TDV_ENV: ${{ inputs.TDV_Environment || 'DEV' }}
+      RUN_RULES_ENGINE: ${{ inputs.RUN_RULES_ENGINE || false }}
+      USE_LIQUIBASE_TAG: ${{ inputs.USE_LIQUIBASE_TAG || false }}
+      LIQUIBASE_TAG: ${{ inputs.LIQUIBASE_TAG || 'default' }}
+      RulesEngine_TAG: ${{ inputs.RulesEngine_TAG || 'latest' }}
